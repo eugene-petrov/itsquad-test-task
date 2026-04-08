@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="Aeqet\Pokedex\Logger\Handler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/pokemon.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Aeqet\Pokedex\Logger\Logger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="name" xsi:type="string">aeqet_pokedex</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Aeqet\Pokedex\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Aeqet\Pokedex\Plugin\PokemonServicePlugin">
+        <arguments>
+            <argument name="logger" xsi:type="object">Aeqet\Pokedex\Logger\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Aeqet\Pokedex\Model\PokemonApiClient">
+        <arguments>
+            <argument name="logger" xsi:type="object">Aeqet\Pokedex\Logger\Logger</argument>
+        </arguments>
+    </type>
+    <type name="Aeqet\Pokedex\Model\PokemonService">
+        <arguments>
+            <argument name="logger" xsi:type="object">Aeqet\Pokedex\Logger\Logger</argument>
+        </arguments>
+        <plugin name="aeqet_pokedex_pokemon_service_logger"
+                type="Aeqet\Pokedex\Plugin\PokemonServicePlugin"/>
+    </type>
+
+</config>

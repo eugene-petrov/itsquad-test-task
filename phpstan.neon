@@ -1,0 +1,10 @@
+parameters:
+    level: 8
+    paths:
+        - Controller
+        - Model
+        - Plugin
+        - ViewModel
+        - registration.php
+    excludePaths:
+        - vendor

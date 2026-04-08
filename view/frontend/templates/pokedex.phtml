@@ -1,0 +1,89 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Aeqet Pokedex — search form and results template
+ *
+ * @var Template $block
+ * @var Escaper $escaper
+ * @var PokemonViewModel $viewModel
+ */
+
+use Aeqet\Pokedex\ViewModel\PokemonViewModel;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+$viewModel = $block->getData('view_model');
+$requestedId = $viewModel->getRequestedId();
+$pokemon = $viewModel->getPokemonData();
+$hasQuery = $requestedId !== '';
+$notFound = $hasQuery && $pokemon === null;
+?>
+<div class="pokedex-container">
+    <form action="" method="get" id="pokedex-search-form">
+        <fieldset class="fieldset">
+            <div class="field required">
+                <label class="label" for="pokemon-id">
+                    <span><?= $escaper->escapeHtml(__('Pokémon ID')) ?></span>
+                </label>
+                <div class="control">
+                    <input type="number"
+                           id="pokemon-id"
+                           name="id"
+                           value="<?= $escaper->escapeHtmlAttr($requestedId) ?>"
+                           placeholder="<?= $escaper->escapeHtmlAttr(__('e.g. 25')) ?>"
+                           class="input-text"
+                           autocomplete="off"/>
+                </div>
+            </div>
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <button type="submit" class="action submit primary">
+                        <span><?= $escaper->escapeHtml(__('Search')) ?></span>
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+
+    <?php if ($notFound): ?>
+        <div class="message error">
+            <span><?= $escaper->escapeHtml(__('No Pokémon found for "%1".', $requestedId)) ?></span>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($pokemon !== null): ?>
+        <div class="pokedex-result">
+            <h2>
+                #<?= $escaper->escapeHtml((string) $pokemon->getId()) ?>
+                &nbsp;<?= $escaper->escapeHtml(ucfirst($pokemon->getName())) ?>
+            </h2>
+            <table class="data table pokedex-stats">
+                <caption class="table-caption"><?= $escaper->escapeHtml(__('Basic Data')) ?></caption>
+                <tbody>
+                    <tr>
+                        <th class="col"><?= $escaper->escapeHtml(__('Height')) ?></th>
+                        <td class="col"><?= $escaper->escapeHtml((string) $pokemon->getHeight()) ?> dm</td>
+                    </tr>
+                    <tr>
+                        <th class="col"><?= $escaper->escapeHtml(__('Weight')) ?></th>
+                        <td class="col"><?= $escaper->escapeHtml((string) $pokemon->getWeight()) ?> hg</td>
+                    </tr>
+                    <tr>
+                        <th class="col"><?= $escaper->escapeHtml(__('Base Experience')) ?></th>
+                        <td class="col"><?= $escaper->escapeHtml((string) $pokemon->getBaseExperience()) ?></td>
+                    </tr>
+                    <tr>
+                        <th class="col"><?= $escaper->escapeHtml(__('Types')) ?></th>
+                        <td class="col">
+                            <?= $escaper->escapeHtml(
+                                implode(', ', array_map('ucfirst', $pokemon->getTypes()))
+                            ) ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</div>
